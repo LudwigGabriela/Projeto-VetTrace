@@ -75,6 +75,7 @@ def service_obter_residuos():
 
     return residuos
 
+
 def service_obter_residuos_mes(mes, ano):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -104,6 +105,7 @@ def service_obter_residuos_mes(mes, ano):
 
     return residuos
 
+
 def service_obter_peso_total():
     conn = get_db_connection()
     cur = conn.cursor()
@@ -119,6 +121,7 @@ def service_obter_peso_total():
     conn.close()
 
     return resultado["peso_total"] or 0
+
 
 def service_obter_peso_total_mes(mes, ano):
     conn = get_db_connection()
@@ -137,3 +140,64 @@ def service_obter_peso_total_mes(mes, ano):
     conn.close()
 
     return resultado["peso_total"] or 0
+
+
+def service_editar_residuo(residuo_id, dados):
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    cur.execute("""
+        UPDATE residuos
+        SET
+            tipo_grupo = %s,
+            descricao = %s,
+            quantidade = %s,
+            unidade = %s,
+            data_registro = %s,
+            setor_gerador = %s,
+            setor_destino = %s
+        WHERE id = %s
+    """, (
+        dados["tipo_grupo"],
+        dados["descricao"],
+        dados["quantidade"],
+        dados["unidade"],
+        dados["data_registro"],
+        dados["setor_gerador"],
+        dados["setor_destino"],
+        residuo_id
+    ))
+
+    if cur.rowcount == 0:
+        cur.close()
+        conn.close()
+        return False
+
+    conn.commit()
+
+    cur.close()
+    conn.close()
+
+    return True
+
+
+def service_excluir_residuo(residuo_id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    cur.execute("""
+        DELETE FROM residuos
+        WHERE id = %s
+    """, (residuo_id,))
+
+    if cur.rowcount == 0:
+        cur.close()
+        conn.close()
+        return False
+
+    conn.commit()
+
+    cur.close()
+    conn.close()
+
+    return True

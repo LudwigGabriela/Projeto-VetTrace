@@ -6,10 +6,13 @@ from ..services.residuo_service import (
     service_obter_residuos,
     service_obter_residuos_mes,
     service_obter_peso_total,
-    service_obter_peso_total_mes
+    service_obter_peso_total_mes,
+    service_editar_residuo,
+    service_excluir_residuo
 )
 
 residuo_bp = Blueprint("residuo", __name__)
+
 
 @residuo_bp.route("/residuo", methods=["POST"])
 @jwt_required()
@@ -28,6 +31,7 @@ def criar_residuo():
         "id": residuo_id
     }), 201
 
+
 @residuo_bp.route("/residuo", methods=["GET"])
 def obter_residuos():
 
@@ -40,6 +44,7 @@ def obter_residuos():
         residuos = service_obter_residuos()
 
     return jsonify(residuos), 200
+
 
 @residuo_bp.route("/residuo/peso-total", methods=["GET"])
 def obter_peso_total():
@@ -57,4 +62,50 @@ def obter_peso_total():
 
     return jsonify({
         "peso_total": total
+    }), 200
+
+
+@residuo_bp.route("/residuo/<int:residuo_id>", methods=["PUT"])
+@jwt_required()
+def editar_residuo(residuo_id):
+
+    dados = request.json
+
+    print("Usuário autenticado:", get_jwt_identity())
+    print("ID do resíduo:", residuo_id)
+    print("Dados recebidos:", dados)
+
+    sucesso = service_editar_residuo(
+        residuo_id,
+        dados
+    )
+
+    if not sucesso:
+        return jsonify({
+            "erro": "Resíduo não encontrado"
+        }), 404
+
+    return jsonify({
+        "message": "Resíduo atualizado com sucesso",
+        "id": residuo_id
+    }), 200
+
+
+@residuo_bp.route("/residuo/<int:residuo_id>", methods=["DELETE"])
+@jwt_required()
+def excluir_residuo(residuo_id):
+
+    print("Usuário autenticado:", get_jwt_identity())
+    print("ID do resíduo:", residuo_id)
+
+    sucesso = service_excluir_residuo(residuo_id)
+
+    if not sucesso:
+        return jsonify({
+            "erro": "Resíduo não encontrado"
+        }), 404
+
+    return jsonify({
+        "message": "Resíduo excluído com sucesso",
+        "id": residuo_id
     }), 200

@@ -90,3 +90,72 @@ def service_obter_cadaveres():
     conn.close()
 
     return cadaveres
+
+
+def service_editar_cadaver(cadaver_id, dados):
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    cur.execute("""
+        UPDATE cadaveres
+        SET
+            especie = %s,
+            identificacao = %s,
+            idade_anos = %s,
+            peso_kg = %s,
+            data_entrada = %s,
+            status = %s,
+            observacoes = %s,
+            nome_proprietario = %s,
+            causa_obito = %s,
+            destino_id = %s,
+            data_saida = %s
+        WHERE id = %s
+    """, (
+        dados["especie"],
+        dados["identificacao"],
+        dados["idade_anos"],
+        dados["peso_kg"],
+        dados["data_entrada"],
+        dados["status"],
+        dados["observacoes"],
+        dados["nome_proprietario"],
+        dados["causa_obito"],
+        dados["destino_id"],
+        dados["data_saida"],
+        cadaver_id
+    ))
+
+    if cur.rowcount == 0:
+        cur.close()
+        conn.close()
+        return False
+
+    conn.commit()
+
+    cur.close()
+    conn.close()
+
+    return True
+
+
+def service_excluir_cadaver(cadaver_id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    cur.execute("""
+        DELETE FROM cadaveres
+        WHERE id = %s
+    """, (cadaver_id,))
+
+    if cur.rowcount == 0:
+        cur.close()
+        conn.close()
+        return False
+
+    conn.commit()
+
+    cur.close()
+    conn.close()
+
+    return True
