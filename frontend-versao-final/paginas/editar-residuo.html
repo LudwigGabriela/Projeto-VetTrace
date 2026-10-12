@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetTrace - Descarte de Resíduos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../estilos/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+<body>
+
+    <!-- Sidebar Fixa -->
+    <aside class="sidebar-fixed">
+        <div class="sidebar-header">
+            <img src="../assets/logo-vet-trace.png" alt="Logo" style="height: 40px; width: auto;">
+            <div>
+                <h1>VetTrace</h1>
+                <p>Sistema de Rastreabilidade Clínica</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="descarte-residuos.html" class="nav-item active">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                </svg>
+                <span>Editar Descarte de Resíduos</span>
+            </a>
+        </nav>
+
+    </aside>
+
+    <!-- Painel de Conteúdo -->
+    <main class="content-panel">
+        <div class="main-card">
+
+            <!-- Top Bar -->
+            <div class="main-header">
+                <h2>EDITAR REGISTRO DE RESÍDUOS SÓLIDOS</h2>
+            </div>
+
+            <div class="main-body">
+
+                <!-- Formulário de Registro -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                            </path>
+                        </svg>
+                        <h3>EDITAR DESCARTE</h3>
+                    </div>
+                    <div class="section-body">
+                        <div class="form-row">
+                            <div class="form-group flex-60">
+                                <label class="form-label">Grupo de Resíduo</label>
+                                <select class="form-control" id="form-residuo-input-grupo">
+                                    <option value="" disabled selected>Selecione o grupo</option>
+                                    <option value="A">Grupo A - Infectantes</option>
+                                    <option value="B">Grupo B - Químicos</option>
+                                    <option value="D">Grupo D - Orgânico</option>
+                                    <option value="E">Grupo E - Perfurocortantes</option>
+                                </select>
+                            </div>
+                            <div class="form-group flex-40">
+                                <label class="form-label">Peso (kg)</label>
+                                <input type="number" class="form-control" id="form-residuo-input-peso" placeholder="0.0"
+                                    step="0.1" min="0">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group flex-60">
+                                <label class="form-label">Resíduo Descartado</label>
+                                <input type="text" class="form-control" id="form-residuo-input-nome"
+                                    placeholder="Ex: Seringas, Luvas, etc.">
+                            </div>
+                            <div class="form-group flex-40">
+                                <label class="form-label">Setor de origem</label>
+                                <select class="form-control" id="form-residuo-input-origem">
+                                    <option value="" disabled selected>Selecione o setor</option>
+                                    <option value="A">Centro Cirúrgico</option>
+                                    <option value="B">Consultório</option>
+                                    <option value="B">Internação</option>
+                                    <option value="B">Laboratório</option>
+                                    <option value="B">Central de Esterilização</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- Campos de Data e Hora do Rregistro de Descarte -->
+                        <div class="form-row">
+                            <div class="form-group flex-60">
+                                <label class="form-label">Data do Registro de Descarte</label>
+                                <input type="date" class="form-control" id="form-residuo-input-data">
+                            </div>
+                            <div class="form-group flex-40">
+                                <label class="form-label">Hora do Registro de Descarte</label>
+                                <input type="time" class="form-control" id="form-residuo-input-hora">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group flex-100">
+                                <label class="form-label">Observações</label>
+                                <textarea class="form-control" id="form-residuo-input-observacao"
+                                    placeholder="Adicione informações adicionais sobre o descarte..."></textarea>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button class="btn btn-cancel" id="form-residuo-btn-cancelar">Cancelar</button>
+                            <button class="btn btn-magenta" id="form-residuo-btn-submit">Salvar Alterações</button>
+                        </div>
+                    </div>
+                </div>
+
+                <footer class="copyright">
+                    © 2026 VetTrace. Projeto Integrador III.
+                </footer>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
