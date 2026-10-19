@@ -182,15 +182,14 @@ function formatarData(dataString) {
     return `${dia}/${mes}/${ano} ${hora.substring(0, 5)}`
 }
 
+
 function preencherTabela(residuos) {
+    const tbody = document.getElementById("tabela-residuos");
 
-    const tbody = document.getElementById("tabela-residuos")
-
-    tbody.innerHTML = ""
+    tbody.innerHTML = "";
 
     residuos.forEach(residuo => {
-
-        const linha = document.createElement("tr")
+        const linha = document.createElement("tr");
 
         linha.innerHTML = `
             <td>${residuo.id}</td>
@@ -202,14 +201,29 @@ function preencherTabela(residuos) {
             <td>${residuo.responsavel_nome ?? "-"}</td>
             <td>${residuo.status}</td>
             <td>
-                <button class="btn btn-sm btn-primary btn-editar" data-id="${residuo.id}">Editar</button>
-                <button class="btn btn-sm btn-danger btn-excluir" data-id="${residuo.id}">Excluir</button>
+                <button class="btn btn-sm btn-primary btn-editar"
+                    data-id="${residuo.id}">
+                    Editar
+                </button>
+                <button class="btn btn-sm btn-danger btn-excluir"
+                    data-id="${residuo.id}">
+                    Excluir
+                </button>
             </td>
+        `;
 
-        `
+        tbody.appendChild(linha);
+    });
 
-        tbody.appendChild(linha)
+    // Evento de clique dos botões Editar
+    tbody.onclick = function (event) {
+        const botao = event.target.closest(".btn-editar");
 
-    })
+        if (!botao) return;
 
+        const id = botao.dataset.id;
+
+        window.location.href =
+            `editar-residuo.html?id=${encodeURIComponent(id)}`;
+    };
 }
