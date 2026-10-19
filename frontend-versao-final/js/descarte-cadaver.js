@@ -1,4 +1,32 @@
 document.addEventListener("DOMContentLoaded", carregarCadaveres)
+document.addEventListener("DOMContentLoaded", () => {
+    const tbody = document.getElementById("tabela-cadaveres");
+
+    if (!tbody) {
+        console.error("Elemento #tabela-cadaveres não encontrado.");
+        return;
+    }
+
+    console.log("Evento de edição configurado.");
+
+    tbody.addEventListener("click", function (event) {
+        const botao = event.target.closest(".btn-editar");
+
+        if (!botao) return;
+
+        const id = botao.dataset.id;
+
+        console.log("Botão Editar clicado. ID:", id);
+
+        if (!id) {
+            mostrarMensagem("Não foi possível identificar o cadáver.");
+            return;
+        }
+
+        window.location.href =
+            `editar-cadaver.html?id=${encodeURIComponent(id)}`;
+    });
+});
 
 const btnSubmit = document.getElementById("form-cadaver-btn-submit")
 const btnCancelar = document.getElementById("form-cadaver-btn-cancelar")
@@ -214,13 +242,19 @@ function preencherTabela(cadaveres) {
             <td>${destinos_cadaver[cadaver.destino_id - 1]}</td>
             <td>${cadaver.registrado_por_nome ?? "-"}</td>
             <td>
-                <button class="btn btn-sm btn-primary btn-editar" data-id="${cadaver.id}">Editar</button>
-                <button class="btn btn-sm btn-danger btn-excluir" data-id="${cadaver.id}">Excluir</button>
+                <button class="btn btn-sm btn-primary btn-editar"
+                    data-id="${cadaver.id}">
+                    Editar
+                </button>
+                <button class="btn btn-sm btn-danger btn-excluir"
+                    data-id="${cadaver.id}">
+                    Excluir
+                </button>
             </td>
         `
 
         tbody.appendChild(linha)
-
     })
 
 }
+
