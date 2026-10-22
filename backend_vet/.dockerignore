@@ -1,0 +1,17 @@
+# Tudo aqui fica FORA do contexto de build — não vai para dentro da imagem.
+
+# Ambiente virtual local: a imagem instala as próprias dependências
+venv/
+.venv/
+
+# Segredos: as variáveis chegam ao container pelo docker-compose.yml
+.env
+.env.*
+
+# Cache do Python (o **/ pega também as subpastas, como app/routes/__pycache__)
+**/__pycache__/
+**/*.py[cod]
+
+# Arquivos do próprio Docker
+Dockerfile
+.dockerignore

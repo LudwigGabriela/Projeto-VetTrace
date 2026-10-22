@@ -1,3 +1,7 @@
 venv/
 __pycache__/
 .env
+
+# Backups do banco: contêm dados pessoais e hashes de senha
+backups/
+*.dump

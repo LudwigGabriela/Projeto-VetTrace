@@ -1,4 +1,27 @@
+# ============================================================
+# VetTrace — orquestração dos 3 containers
+#
+#   navegador ──► frontend (Nginx) ──► backend (Flask) ──► db (PostgreSQL)
+#                 :8080 páginas    rede-web          rede-dados
+#                 :5000 API
+#
+# Subir tudo:     docker compose up -d --build --wait
+# Só o banco:     docker compose up -d db
+# Documentação:   docs/docker.md
+# ============================================================
+
+# Rotação de logs, reaproveitada pelos 3 serviços (âncora YAML).
+# Sem isto o log de cada container cresce sem limite no disco.
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
+  # ----------------------------------------------------------
+  # Banco de dados — PostgreSQL 18
+  # ----------------------------------------------------------
   db:
     image: postgres:18
     container_name: vettrace-db
@@ -8,15 +31,109 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vettrace}
       POSTGRES_DB: ${POSTGRES_DB:-vettrace}
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      # Para DBeaver/pgAdmin e para rodar o Flask fora do Docker.
+      # 127.0.0.1 = acessível só desta máquina, não pela rede da faculdade.
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     volumes:
       - vettrace-data:/var/lib/postgresql
       - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    networks:
+      - rede-dados
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-vettrace}"]
+      # -h 127.0.0.1 testa via TCP. Na primeira inicialização o Postgres roda o
+      # schema.sql escutando só no socket local; via TCP ele só responde depois
+      # que o schema terminou — o backend nunca sobe com o banco pela metade.
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
+      start_interval: 2s
+    logging: *logging
+
+  # ----------------------------------------------------------
+  # Backend — API Flask servida pelo Gunicorn
+  # ----------------------------------------------------------
+  backend:
+    build: ./backend_vet
+    container_name: vettrace-backend
+    restart: unless-stopped
+    environment:
+      # "db" é o nome do serviço acima: o DNS interno do Docker o traduz para o
+      # IP do container. A porta é a 5432 INTERNA, não a publicada no host.
+      DATABASE_URL: postgresql://${POSTGRES_USER:-vettrace}:${POSTGRES_PASSWORD:-vettrace}@db:5432/${POSTGRES_DB:-vettrace}
+      SECRET_KEY: ${SECRET_KEY}
+    # Sem "ports": o backend não fica exposto no host. Só o Nginx fala com ele.
+    networks:
+      - rede-web
+      - rede-dados
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+      start_interval: 2s
+    logging: *logging
+    # Modo desenvolvimento ("docker compose watch"): salvar um .py copia o
+    # arquivo para o container e reinicia o Gunicorn.
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./backend_vet/app
+          target: /app/app
+        - action: sync+restart
+          path: ./backend_vet/database.py
+          target: /app/database.py
+        - action: rebuild
+          path: ./backend_vet/requirements.txt
+
+  # ----------------------------------------------------------
+  # Frontend — Nginx: páginas estáticas + proxy reverso da API
+  # ----------------------------------------------------------
+  frontend:
+    build: ./frontend_vet
+    container_name: vettrace-frontend
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-8080}:80"  # páginas → http://localhost:8080
+      # API. Fixa em 5000 porque o JavaScript chama http://127.0.0.1:5000 direto.
+      - "127.0.0.1:5000:5000"
+    networks:
+      - rede-web
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+      start_interval: 2s
+    logging: *logging
+    # Modo desenvolvimento: salvar um HTML/CSS/JS copia o arquivo para o
+    # container na hora (sem rebuild). Mexer no nginx.conf reconstrói a imagem.
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend_vet
+          target: /usr/share/nginx/html
+          ignore:
+            - nginx.conf
+        - action: rebuild
+          path: ./frontend_vet/nginx.conf
+
+# Duas redes = segmentação. O Nginx não enxerga o banco: só o backend, que
+# está nas duas, faz a ponte. Na mesma rede, um container acha o outro pelo nome.
+networks:
+  rede-web:
+  rede-dados:
 
 volumes:
+  # Dados do Postgres. Sobrevive a stop, down, rebuild e recriação do container.
+  # Só é apagado com "docker compose down -v".
   vettrace-data:

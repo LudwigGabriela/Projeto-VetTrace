@@ -1,0 +1,6 @@
+# Tudo aqui fica FORA do contexto de build.
+# (O Dockerfile já copia só paginas/, js/, estilos/ e assets/ — isto só deixa o build mais leve.)
+Dockerfile
+.dockerignore
+**/.DS_Store
+**/Thumbs.db
