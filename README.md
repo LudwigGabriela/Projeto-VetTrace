@@ -1,3 +1,5 @@
+![Docker Image CI](https://github.com/LudwigGabriela/Projeto-VetTrace/actions/workflows/docker-image.yml/badge.svg)
+
 # 🐾 VetTrace
 
 <p align="center">
@@ -275,7 +277,15 @@ Wireflow, Canva e wireframe: [docs/frontend.md](docs/frontend.md#8-design-e-prot
 | **Maria Elis** | UI/UX Designer & Documentação | [@mariaelis23](https://github.com/mariaelis23) |
 | **Carlos Eduardo** | Tech Leader & Arquitetura | [@karlosmafra](https://github.com/karlosmafra) |
 
+## Integração Contínua (CI)
 
+Este projeto usa GitHub Actions para validar automaticamente cada commit na branch `main`.
+O workflow `Docker Image CI` executa:
+
+- **build**: constrói as imagens do backend e do frontend com `docker compose build`
+- **test**: instala as dependências do backend e roda os testes com `pytest`
+
+O arquivo do workflow fica em `.github/workflows/docker-image.yml`.
 ---
 
 # 📄 Licença
