@@ -4,11 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VetTrace - Ciclos de Esterilização</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <title>VetTrace - Registrar Material</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../estilos/styles.css">
-
 </head>
 
 <body>
@@ -33,7 +31,7 @@
                 </svg>
                 <span>Dashboard</span>
             </a>
-            <a href="estoque-esteril.html" class="nav-item">
+            <a href="estoque-esteril.html" class="nav-item active">
                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <path
                         d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
@@ -42,7 +40,11 @@
                 </svg>
                 <span>Estoque Estéril</span>
             </a>
-            <a href="ciclos.html" class="nav-item active">
+            <div class="submenu">
+                <a href="estoque-esteril.html" class="submenu-item">Consultar Estoque</a>
+                <a href="registrar-material.html" class="submenu-item active">Registrar Material</a>
+            </div>
+            <a href="ciclos.html" class="nav-item">
                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
                     <path d="M3 3v5h5" />
@@ -84,7 +86,6 @@
                 </svg>
                 <span>Relatórios</span>
             </a>
-
         </nav>
 
         <div class="sidebar-footer">
@@ -121,18 +122,15 @@
 
             <!-- Top Bar -->
             <div class="main-header">
-                <div class="header-text">
-                    <h2>CICLOS DE ESTERILIZAÇÃO</h2>
-                    <p>Controle e rastreabilidade dos ciclos de autoclave</p>
-                </div>
-                <a href="solicitar-material.html" class="btn-magenta"
+                <h2>REGISTRO DE NOVO MATERIAL / KIT ESTÉRIL</h2>
+                <a href="estoque-esteril.html" class="btn-magenta"
                     style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; border-radius: 0.75rem; font-weight: 700;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                         style="width: 1.125rem; height: 1.125rem;">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
                     </svg>
-                    SOLICITAR MATERIAL
+                    VOLTAR AO ESTOQUE
                 </a>
             </div>
 
@@ -140,116 +138,148 @@
 
                 <!-- KPIs -->
                 <div class="kpi-grid">
-                    <!-- Kits Disponíveis -->
                     <div class="kpi-card">
-                        <div class="kpi-header">
-                            <div class="kpi-icon-bg" style="background-color: rgba(67, 5, 78, 0.1);">
-                                <svg class="kpi-icon" style="color: #43054E" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.5">
-                                    <path
-                                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                                </svg>
-                            </div>
-                            <svg class="trend-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="3">
-                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-                                <polyline points="17 6 23 6 23 12"></polyline>
-                            </svg>
+                        <p class="kpi-label">Lote Autogerado</p>
+                        <div class="kpi-value-container">
+                            <span class="kpi-value" style="font-size: 1.5rem; color: #43054E;" id="lote-sugerido">LOTE-20260519-A</span>
                         </div>
-                        <p class="kpi-label">Kits Disponíveis</p>
-                        <p class="kpi-value" style="color: #43054E">28</p>
                     </div>
 
-                    <!-- Esterilizações (Mês) -->
                     <div class="kpi-card">
-                        <div class="kpi-header">
-                            <div class="kpi-icon-bg" style="background-color: rgba(166, 43, 105, 0.1);">
-                                <svg class="kpi-icon" style="color: #A62B69" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.5">
-                                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                                </svg>
-                            </div>
-                            <svg class="calendar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2.5">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
+                        <p class="kpi-label">Autoclaves Ativos</p>
+                        <div class="kpi-value-container">
+                            <span class="kpi-value">3</span>
+                            <span class="kpi-unit">equipamentos</span>
                         </div>
-                        <p class="kpi-label">Esterilizações (Mês)</p>
-                        <p class="kpi-value" style="color: #A62B69">298</p>
                     </div>
 
-                    <!-- Resíduos (Mês) -->
-                    <div class="kpi-card">
-                        <div class="kpi-header">
-                            <div class="kpi-icon-bg" style="background-color: rgba(166, 43, 105, 0.1);">
-                                <svg class="kpi-icon" style="color: #A62B69" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.5">
-                                    <polyline points="3 6 5 6 21 6" />
-                                    <path
-                                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                                </svg>
-                            </div>
-                        </div>
-                        <p class="kpi-label">Resíduos (Mês)</p>
-                        <p class="kpi-value" style="color: #A62B69">286.5<span class="kpi-unit">kg</span></p>
-                    </div>
-
-                    <!-- Validade Próxima -->
                     <div class="kpi-card alert">
-                        <div class="kpi-alert-label">ALERTA</div>
-                        <div class="kpi-header">
-                            <div class="kpi-icon-bg" style="background-color: rgba(166, 43, 105, 0.15);">
-                                <svg class="kpi-icon" style="color: #A62B69" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.5">
-                                    <path
-                                        d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                                    <line x1="12" y1="9" x2="12" y2="13" />
-                                    <line x1="12" y1="17" x2="12.01" y2="17" />
-                                </svg>
+                        <p class="kpi-label alert-text">Tempo de Esterilização Padrão</p>
+                        <div class="kpi-value-container">
+                            <span class="kpi-value alert-value">20</span>
+                            <span class="kpi-unit">minutos</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulário de Registro -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <path d="M12 5v14M5 12h14" />
+                        </svg>
+                        <h3>DETALHES DO NOVO MATERIAL / KIT</h3>
+                    </div>
+                    <div class="section-body">
+                        
+                        <!-- Dados do Kit -->
+                        <div class="form-row">
+                            <div class="form-group flex-60">
+                                <label class="form-label">Nome do Kit / Material</label>
+                                <select class="form-control" id="kit-name-select">
+                                    <option value="" disabled selected>Selecione o nome do kit ou material</option>
+                                    <option value="Caixa Pequena 1">Caixa Pequena 1</option>
+                                    <option value="Caixa Pequena 2">Caixa Pequena 2</option>
+                                    <option value="Caixa Média 1">Caixa Média 1</option>
+                                    <option value="Caixa Média 2">Caixa Média 2</option>
+                                    <option value="Caixa Grande 1">Caixa Grande 1</option>
+                                    <option value="Caixa Grande 2">Caixa Grande 2</option>
+                                    <option value="Caixa Esofágica">Caixa Esofágica</option>
+                                    <option value="Caixa Hemostática">Caixa Hemostática</option>
+                                    <option value="Caixa Vascular">Caixa Vascular</option>
+                                </select>
+                            </div>
+                            <div class="form-group flex-40">
+                                <label class="form-label">Tipo / Categoria</label>
+                                <select class="form-control">
+                                    <option value="Pequeno">Pequeno - Kit Sutura / Geral</option>
+                                    <option value="Médio" selected>Médio - Procedimento Comum</option>
+                                    <option value="Grande">Grande - Kit Ortopedia / Especialidade</option>
+                                    <option value="Especial">Especial - Cirurgia Delicada</option>
+                                </select>
                             </div>
                         </div>
-                        <p class="kpi-label">Validade Próxima</p>
-                        <p class="kpi-value" style="color: #A62B69">3</p>
-                    </div>
-                </div>
 
-                <!-- Gráficos -->
-                <div class="charts-grid">
-                    <div class="chart-card">
-                        <div class="chart-header">
-                            <h3>Atividade Semanal</h3>
+                        <!-- Lote e Equipamento -->
+                        <div class="form-row">
+                            <div class="form-group flex-40">
+                                <label class="form-label">Lote de Esterilização</label>
+                                <input type="text" class="form-control" value="LOTE-20260519-A">
+                            </div>
+                            <div class="form-group flex-60">
+                                <label class="form-label">Autoclave Utilizado</label>
+                                <select class="form-control">
+                                    <option value="autoclave1">Autoclave Digital V2 (Principal)</option>
+                                    <option value="autoclave2">Autoclave Horizontal M1 (Secundário)</option>
+                                    <option value="autoclave3">Autoclave Térmica T3 (Rápido)</option>
+                                </select>
+                            </div>
                         </div>
 
-                    </div>
-                    <div class="chart-card">
-                        <div class="chart-header">
-                            <h3>Tendência de Esterilização</h3>
+                        <!-- Parâmetros de Esterilização -->
+                        <div class="form-row">
+                            <div class="form-group flex-60">
+                                <label class="form-label">Temperatura / Parâmetros do Ciclo</label>
+                                <input type="text" class="form-control" value="134°C - 2.1 bar - 20min">
+                            </div>
+                            <div class="form-group flex-40">
+                                <label class="form-label">Status do Material</label>
+                                <select class="form-control">
+                                    <option value="Disponível" selected>Disponível - Aprovado</option>
+                                    <option value="Quarentena">Em Quarentena - Aguardando Laudo</option>
+                                    <option value="Pendente">Pendente - Lacre Violado</option>
+                                </select>
+                            </div>
                         </div>
 
+                        <!-- Data, Hora e Validade -->
+                        <div class="form-row">
+                            <div class="form-group flex-40">
+                                <label class="form-label">Data de Esterilização</label>
+                                <input type="date" class="form-control" value="2026-05-19">
+                            </div>
+                            <div class="form-group flex-20">
+                                <label class="form-label">Hora</label>
+                                <input type="time" class="form-control" value="08:30">
+                            </div>
+                            <div class="form-group flex-40">
+                                <label class="form-label">Data de Validade (Expiração)</label>
+                                <input type="date" class="form-control" value="2026-06-19">
+                            </div>
+                        </div>
+
+                        <!-- Responsável e Descrição -->
+                        <div class="form-row">
+                            <div class="form-group flex-100">
+                                <label class="form-label">Responsável Técnico pelo Registro</label>
+                                <input type="text" class="form-control" value="Usuário SILVA">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group flex-100">
+                                <label class="form-label">Descrição / Composição dos Itens do Kit</label>
+                                <textarea class="form-control" rows="4"
+                                    placeholder="Insira detalhes da autoclave, verificação física dos lacres químicos ou relação completa de pinças e tesouras inclusas..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Ações -->
+                        <div class="form-actions" style="margin-top: 2rem;">
+                            <button class="btn btn-cancel">Limpar Formulário</button>
+                            <button class="btn btn-magenta" onclick="alert('Material registrado com sucesso no estoque!'); window.location.href='estoque-esteril.html';">Registrar Kit no Estoque</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Atividades Recentes -->
-                <div class="activities-card">
-                    <div class="activities-header">
-                        <h3>Atividades Recentes</h3>
-                    </div>
-
-
-                </div>
             </div>
-
-        </div>
         </div>
         <footer class="copyright">
             © 2026 VetTrace. Projeto Integrador III.
         </footer>
     </main>
 
-    <!-- Scripts dos Gráficos -->
     <script src="../js/utils/usuario.js"></script>
 </body>
 
