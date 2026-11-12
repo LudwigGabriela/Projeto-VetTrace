@@ -3684,3 +3684,246 @@ select.form-control {
     font-weight: 500;
     padding-bottom: 2rem;
 }
+
+
+/* =====================================
+   MODAL DE CONFIRMAÇÃO DE EXCLUSÃO
+===================================== */
+
+.modal-exclusao[hidden] {
+    display: none;
+}
+
+.modal-exclusao {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(20, 10, 25, 0.58);
+    backdrop-filter: blur(4px);
+
+    animation: aparecerFundo 0.2s ease;
+}
+
+.modal-exclusao-conteudo {
+    width: 100%;
+    max-width: 430px;
+
+    padding: 32px;
+
+    background: #FFFFFF;
+    border-radius: 18px;
+
+    text-align: center;
+
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.20);
+
+    animation: aparecerModal 0.25s ease;
+}
+
+/* Ícone */
+
+.modal-exclusao-icone {
+    width: 64px;
+    height: 64px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 20px;
+
+    color: #B83D4A;
+    background: #FFF0F1;
+
+    border-radius: 50%;
+}
+
+/* Título e mensagens */
+
+.modal-exclusao-conteudo h2 {
+    margin: 0 0 12px;
+
+    color: #4B0758;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.modal-exclusao-conteudo > p {
+    margin: 0;
+
+    color: #68616B;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.modal-exclusao-residuo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    margin: 22px 0 14px;
+    padding: 14px;
+
+    background: #F8F4F9;
+    border: 1px solid #E9DFEC;
+    border-radius: 10px;
+}
+
+.modal-exclusao-residuo span {
+    color: #817786;
+    font-size: 12px;
+}
+
+.modal-exclusao-residuo strong {
+    color: #4B0758;
+    font-size: 15px;
+    overflow-wrap: anywhere;
+}
+
+.modal-exclusao-conteudo .modal-exclusao-aviso {
+    color: #B83D4A;
+    font-size: 12px;
+}
+
+/* Botões */
+
+.modal-exclusao-acoes {
+    display: flex;
+    gap: 12px;
+
+    margin-top: 26px;
+}
+
+.modal-exclusao-acoes button {
+    flex: 1;
+
+    padding: 12px 16px;
+
+    border-radius: 9px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-cancelar-exclusao {
+    color: #4B0758;
+    background: #FFFFFF;
+    border: 1px solid #D8C9DC;
+}
+
+.btn-cancelar-exclusao:hover {
+    background: #F8F4F9;
+    border-color: #4B0758;
+}
+
+.btn-confirmar-exclusao {
+    color: #FFFFFF;
+    background: #B83D4A;
+    border: 1px solid #B83D4A;
+}
+
+.btn-confirmar-exclusao:hover {
+    background: #982E39;
+    border-color: #982E39;
+    transform: translateY(-1px);
+}
+
+.modal-exclusao-acoes button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Animações */
+
+@keyframes aparecerFundo {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes aparecerModal {
+    from {
+        opacity: 0;
+        transform: translateY(15px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Responsividade */
+
+@media (max-width: 480px) {
+    .modal-exclusao-conteudo {
+        padding: 25px 20px;
+    }
+
+    .modal-exclusao-acoes {
+        flex-direction: column-reverse;
+    }
+}
+
+
+
+/* ==========================================================
+   BOTÕES DE AÇÃO — TABELA DE RESÍDUOS
+   ========================================================== */
+
+.btn.btn-editar {
+    background-color: #6F42C1;
+    border: 1px solid #6F42C1;
+    color: #FFFFFF;
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn.btn-editar:hover {
+    background-color: #59339D;
+    border-color: #59339D;
+    color: #FFFFFF;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(111, 66, 193, 0.25);
+}
+
+.btn.btn-excluir {
+    background-color: #DC3545;
+    border: 1px solid #DC3545;
+    color: #FFFFFF;
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn.btn-excluir:hover {
+    background-color: #B02A37;
+    border-color: #B02A37;
+    color: #FFFFFF;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(220, 53, 69, 0.25);
+}
+
+.btn.btn-editar:focus,
+.btn.btn-excluir:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.2);
+}

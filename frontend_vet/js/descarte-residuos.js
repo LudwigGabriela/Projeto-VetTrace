@@ -7,6 +7,34 @@ const btnCancelar = document.getElementById("form-residuo-btn-cancelar")
 btnSubmit.addEventListener("click", enviarFormulario)
 btnCancelar.addEventListener("click", limparFormulario)
 
+// Elementos do modal de exclusão
+const modalExclusao = document.getElementById("modal-exclusao");
+const nomeResiduoExclusao = document.getElementById("nome-residuo-exclusao");
+
+const btnCancelarExclusao = document.getElementById("btn-cancelar-exclusao");
+const btnConfirmarExclusao = document.getElementById("btn-confirmar-exclusao");
+
+// ID do resíduo selecionado
+let residuoSelecionado = null;
+
+// Eventos do modal
+btnCancelarExclusao.addEventListener("click", fecharModalExclusao);
+btnConfirmarExclusao.addEventListener("click", confirmarExclusao);
+
+// Fecha o modal ao clicar fora dele
+modalExclusao.addEventListener("click", function(event) {
+    if (event.target === modalExclusao) {
+        fecharModalExclusao();
+    }
+});
+
+// Fecha o modal com ESC
+document.addEventListener("keydown", function(event) {
+    if (event.key === "Escape" && !modalExclusao.hidden) {
+        fecharModalExclusao();
+    }
+});
+
 function enviarFormulario(event) {
     event.preventDefault()
 
@@ -183,47 +211,160 @@ function formatarData(dataString) {
 }
 
 
+
 function preencherTabela(residuos) {
+
     const tbody = document.getElementById("tabela-residuos");
 
-    tbody.innerHTML = "";
+    tbody.replaceChildren();
 
     residuos.forEach(residuo => {
+
         const linha = document.createElement("tr");
 
-        linha.innerHTML = `
-            <td>${residuo.id}</td>
-            <td>${formatarData(residuo.data_registro)}</td>
-            <td>${residuo.tipo_grupo}</td>
-            <td>${residuo.descricao}</td>
-            <td>${residuo.quantidade}</td>
-            <td>${residuo.setor_gerador}</td>
-            <td>${residuo.responsavel_nome ?? "-"}</td>
-            <td>${residuo.status}</td>
-            <td>
-                <button class="btn btn-sm btn-primary btn-editar"
-                    data-id="${residuo.id}">
-                    Editar
-                </button>
-                <button class="btn btn-sm btn-danger btn-excluir"
-                    data-id="${residuo.id}">
-                    Excluir
-                </button>
-            </td>
-        `;
+        const valores = [
+            residuo.id,
+            formatarData(residuo.data_registro),
+            residuo.tipo_grupo,
+            residuo.descricao,
+            residuo.quantidade,
+            residuo.setor_gerador,
+            residuo.responsavel_nome ?? "-",
+            residuo.status
+        ];
+
+        valores.forEach(valor => {
+            const celula = document.createElement("td");
+            celula.textContent = valor;
+            linha.appendChild(celula);
+        });
+
+        // Coluna de ações
+        const celulaAcoes = document.createElement("td");
+
+        // Botão editar
+        const btnEditar = document.createElement("button");
+        btnEditar.type = "button";
+        btnEditar.className = "btn btn-sm btn-primary btn-editar";
+        btnEditar.textContent = "Editar";
+        btnEditar.dataset.id = residuo.id;
+
+        // Botão excluir
+        const btnExcluir = document.createElement("button");
+        btnExcluir.type = "button";
+        btnExcluir.className = "btn btn-sm btn-danger btn-excluir";
+        btnExcluir.textContent = "Excluir";
+        btnExcluir.dataset.id = residuo.id;
+        btnExcluir.dataset.descricao = residuo.descricao;
+
+        celulaAcoes.appendChild(btnEditar);
+        celulaAcoes.appendChild(btnExcluir);
+
+        linha.appendChild(celulaAcoes);
 
         tbody.appendChild(linha);
     });
 
-    // Evento de clique dos botões Editar
-    tbody.onclick = function (event) {
-        const botao = event.target.closest(".btn-editar");
+    // Eventos dos botões da tabela
+    tbody.onclick = function(event) {
 
-        if (!botao) return;
+        const botaoEditar = event.target.closest(".btn-editar");
+        const botaoExcluir = event.target.closest(".btn-excluir");
 
-        const id = botao.dataset.id;
+        if (botaoEditar) {
 
-        window.location.href =
-            `editar-residuo.html?id=${encodeURIComponent(id)}`;
+            const id = botaoEditar.dataset.id;
+
+            window.location.href =
+                `editar-residuo.html?id=${encodeURIComponent(id)}`;
+
+            return;
+        }
+
+        if (botaoExcluir) {
+
+            const id = botaoExcluir.dataset.id;
+            const descricao = botaoExcluir.dataset.descricao;
+
+            abrirModalExclusao(id, descricao);
+        }
     };
 }
+
+
+function abrirModalExclusao(id, descricao) {
+
+    residuoSelecionado = id;
+
+    nomeResiduoExclusao.textContent = descricao;
+
+    modalExclusao.hidden = false;
+}
+
+function fecharModalExclusao() {
+
+    modalExclusao.hidden = true;
+
+    residuoSelecionado = null;
+
+    btnConfirmarExclusao.disabled = false;
+    btnConfirmarExclusao.textContent = "Sim, excluir";
+}
+
+async function confirmarExclusao() {
+
+    if (!residuoSelecionado) {
+        return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        mostrarMensagem("Sessão expirada. Faça login novamente.");
+        window.location.href = "login.html";
+        return;
+    }
+
+    try {
+
+        btnConfirmarExclusao.disabled = true;
+        btnCancelarExclusao.disabled = true;
+        btnConfirmarExclusao.textContent = "Excluindo...";
+
+        const response = await fetch(
+            `http://127.0.0.1:5000/residuo/${encodeURIComponent(residuoSelecionado)}`,
+            {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            throw new Error(
+                data.msg || data.erro || "Não foi possível excluir o resíduo."
+            );
+        }
+
+        fecharModalExclusao();
+
+        mostrarMensagem("Resíduo excluído com sucesso!");
+
+        carregarResiduos();
+        carregarPesoResiduos();
+
+    } catch (error) {
+
+        console.error("Erro ao excluir resíduo:", error);
+
+        mostrarMensagem(error.message);
+
+        btnConfirmarExclusao.disabled = false;
+        btnCancelarExclusao.disabled = false;
+        btnConfirmarExclusao.textContent = "Sim, excluir";
+    }
+}
+
