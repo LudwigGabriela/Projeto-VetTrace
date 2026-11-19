@@ -20,7 +20,6 @@ function enviarFormulario(event) {
         return
     }
 
-    /*
 
     // Recupera o usuário logado
     const usuario = JSON.parse(localStorage.getItem("usuario"))
@@ -44,7 +43,6 @@ function enviarFormulario(event) {
         nome: material.nome,
         tipo: material.tipo,
         descricao: material.descricao,
-        //status: "congelado",
 
         // Usuário que está logado
         registrado_por: usuario.id,
@@ -80,20 +78,18 @@ function enviarFormulario(event) {
         })
         .then(data => {
 
-            mostrarMensagem("Material registrado com sucesso")
+            alert("Material registrado com sucesso")
 
             limparFormulario()
-            carregarmateriales()
 
         })
         .catch(error => {
 
             console.error(error)
-            mostrarMensagem(error.message)
+            alert(error.message)
 
         })
 
-        */
     
 }
 
