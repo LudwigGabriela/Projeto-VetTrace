@@ -11,16 +11,33 @@ from ..services.cadaver_service import (
 cadaver_bp = Blueprint("cadaver", __name__)
 
 
+
+
 @cadaver_bp.route("/cadaver", methods=["POST"])
 @jwt_required()
 def criar_cadaver():
 
     dados = request.json or {}
+    
+    campos_obrigatorios = [
+        "especie",
+        "data_entrada",
+        "status"
+    ]
 
-    identidade = get_jwt_identity()
+    campos_ausentes = [
+        campo
+        for campo in campos_obrigatorios
+        if not dados.get(campo)
+    ]
 
-    usuario_id = get_jwt_identity()  # Obtém o ID do usuário autenticado
+    if campos_ausentes:
+        return jsonify({
+            "erro": "Campos obrigatórios não informados",
+            "campos": campos_ausentes
+        }), 400
 
+    usuario_id = get_jwt_identity()
     dados["registrado_por"] = int(usuario_id)
 
     cadaver_id = service_criar_cadaver(dados)
@@ -29,6 +46,8 @@ def criar_cadaver():
         "message": "Cadáver cadastrado com sucesso",
         "id": cadaver_id
     }), 201
+
+
 
 
 @cadaver_bp.route("/cadaver", methods=["GET"])

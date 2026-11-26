@@ -58,3 +58,30 @@ def test_excluir_residuo_com_sucesso(client, auth_headers, monkeypatch):
     )
     resposta = client.delete("/residuo/1", headers=auth_headers)
     assert resposta.status_code == 200
+
+
+def test_editar_residuo_sem_token_retorna_401(client):
+    resposta = client.put(
+        "/residuo/1",
+        json={"peso": 5}
+    )
+
+    assert resposta.status_code == 401
+
+
+def test_excluir_residuo_sem_token_retorna_401(client):
+    resposta = client.delete("/residuo/1")
+
+    assert resposta.status_code == 401
+
+
+def test_peso_total_por_mes(client, monkeypatch):
+    monkeypatch.setattr(
+        "app.routes.residuo.service_obter_peso_total_mes",
+        lambda mes, ano: 42.5
+    )
+
+    resposta = client.get("/residuo/peso-total?mes=5&ano=2025")
+
+    assert resposta.status_code == 200
+    assert resposta.get_json()["peso_total"] == 42.5

@@ -19,7 +19,7 @@ def service_criar_material(dados, usuario_id):
         dados["tipo"],
     ))
 
-    material_id = cur.fetchone()["id"]
+    material_id = cur.fetchone()[0]
 
     conn.commit()
 
@@ -44,7 +44,18 @@ def service_obter_materiais():
         ORDER BY r.id DESC
     """)
 
-    materiais = cur.fetchall()
+    resultados = cur.fetchall()
+
+    materiais = [
+        {
+            "id": material[0],
+            "nome": material[1],
+            "descricao": material[2],
+            "tipo": material[3],
+            "ativo": material[4]
+        }
+        for material in resultados
+    ]
 
     cur.close()
     conn.close()

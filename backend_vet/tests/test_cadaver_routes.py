@@ -13,6 +13,7 @@ def test_criar_cadaver_sem_token_retorna_401(client):
     assert resposta.status_code == 401
 
 
+
 def test_criar_cadaver_registra_usuario_logado(client, auth_headers, monkeypatch):
     recebido = {}
 
@@ -20,9 +21,23 @@ def test_criar_cadaver_registra_usuario_logado(client, auth_headers, monkeypatch
         recebido.update(dados)
         return 7
 
-    monkeypatch.setattr("app.routes.cadaver.service_criar_cadaver", service_falso)
+    monkeypatch.setattr(
+        "app.routes.cadaver.service_criar_cadaver",
+        service_falso
+    )
 
-    resposta = client.post("/cadaver", json={"nome": "Rex"}, headers=auth_headers)
+    dados = {
+        "especie": "Canina",
+        "identificacao": "Rex",
+        "data_entrada": "2026-11-24 10:00:00",
+        "status": "congelado"
+    }
+
+    resposta = client.post(
+        "/cadaver",
+        json=dados,
+        headers=auth_headers
+    )
 
     assert resposta.status_code == 201
     assert resposta.get_json()["id"] == 7
@@ -45,3 +60,36 @@ def test_excluir_cadaver_com_sucesso(client, auth_headers, monkeypatch):
     )
     resposta = client.delete("/cadaver/5", headers=auth_headers)
     assert resposta.status_code == 200
+
+
+def test_editar_cadaver_sem_token_retorna_401(client):
+    resposta = client.put(
+        "/cadaver/1",
+        json={"identificacao": "TESTE"}
+    )
+
+    assert resposta.status_code == 401
+
+
+def test_excluir_cadaver_sem_token_retorna_401(client):
+    resposta = client.delete("/cadaver/1")
+
+    assert resposta.status_code == 401
+
+
+
+def test_criar_cadaver_com_json_vazio_retorna_400(client, auth_headers):
+    resposta = client.post(
+        "/cadaver",
+        json={},
+        headers=auth_headers
+    )
+
+    assert resposta.status_code == 400
+    assert resposta.get_json()["erro"] == "Campos obrigatórios não informados"
+    assert set(resposta.get_json()["campos"]) == {
+        "especie",
+        "data_entrada",
+        "status"
+    }
+
