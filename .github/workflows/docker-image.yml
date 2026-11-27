@@ -64,6 +64,7 @@ jobs:
       - name: Run tests
         working-directory: backend_vet
         env:
+          DATABASE_URL: postgresql://vettrace:vettrace@localhost:5432/vettrace_test
           TEST_DATABASE_URL: postgresql://vettrace:vettrace@localhost:5432/vettrace_test
           COVERAGE_FILE: /tmp/.coverage
         run: |
